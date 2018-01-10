@@ -24,7 +24,7 @@ As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA scor
 * `VAE_leaf_dense.py`: Testing the performance of variational auto encoder using flattened fully connected layers on leaf data. Manifold learning is also used to visualize possible clusters in the latent space. 
 * `VAE_leaf_cnn.py`: Similar as above, but now with a CNN approach. 
 * `encoder_clf_test.py`: This script compares the classification performance using nearest neighbor under three distances:
-    * pixel loss between test_img and an "class-average" image that is produced by directly taking the mean of training images with the same class label.
+    * Pixel loss between test_img and an "class-average" image that is produced by directly taking the mean of training images with the same class label.
     * Same idea as above, but with the encoder feature trained from a VAE network as the "image".
     * Same idea as the first, but the "class-average" image is produced by decoding the mean of encoder features from each class. 
 * `Keras_cnn_leaf.py`: Directly applying cnn on the leaf classification task. Since the data set is small, Keras's image generator is used.
