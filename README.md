@@ -10,6 +10,8 @@ In both cases, proper scalling features is crucial. Here `RobustScaler()` from `
 As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA score from CCD feature. 
 
 # Brief description for each script
+## Dependencies
+`Keras`, `Tensorflow`, `scikit-learn`, `scikit-image`, `h5py`.
 
 ## utils
 * `img2array.py`: Reading image files from each subfolder of the downloaded dataset, adjust the resolution according to requirement and save data into numpy array. Class labels are also produced accordingly.
@@ -28,5 +30,5 @@ As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA scor
     * Same idea as above, but with the encoder feature trained from a VAE network as the "image".
     * Same idea as the first, but the "class-average" image is produced by decoding the mean of encoder features from each class. 
 * `Keras_cnn_leaf.py`: Directly applying cnn on the leaf classification task. Since the data set is small, Keras's image generator is used.
-* 'feature_test.py': Testing some common classifiers including: SVM, kNN, RandomForest and MLP on extraced features. Classifiers are from scikit-learn package.
+* `feature_test.py`: Testing some common classifiers including: SVM, kNN, RandomForest and MLP on extraced features. Classifiers are from scikit-learn package.
 * `leaf_pnn.py`: Testing SVM and PNN on extracted features.
