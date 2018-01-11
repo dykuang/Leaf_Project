@@ -23,7 +23,7 @@ As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA scor
 * `Transer_VGG19_leaf.py`: Extracting/maxpooling output after the maxpooling layer of the second convolutional block from the pretrained VGG19 network as the feature vector. I tried to add training layers directly on top but the process stoped itself during training. Maybe it is because the hardware is not powerful to handle (on cpu of a laptop). So I decided to do it offine by first saving the extracted features and then later feed saved features to different classifiers for test.
 
 ## tests
-* `VAE_leaf_dense.py`: Testing the performance of variational auto encoder using flattened fully connected layers on leaf data. Manifold learning is also used to visualize possible clusters in the latent space. 
+* `VAE_leaf_dense.py`: Testing the performance of variational auto encoder using flattened fully connected layers on leaf data. Manifold learning is also used to visualize possible clusters in the latent space. Part of the code is from this [post](https://blog.keras.io/building-autoencoders-in-keras.html)
 * `VAE_leaf_cnn.py`: Similar as above, but now with a CNN approach. 
 * `encoder_clf_test.py`: This script compares the classification performance using nearest neighbor under three distances:
     * Pixel loss between test_img and an "class-average" image that is produced by directly taking the mean of training images with the same class label.
