@@ -2,7 +2,7 @@
 This repository contains some codes that I tried in classifying different leaves and possibly will be more organised once a good model is achieved. The data set for test can be obtained from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/leaf), [Swedish leaf dataset](http://www.cvl.isy.liu.se/en/research/datasets/swedish-leaf/) and [UCI's 100 leaf](https://archive.ics.uci.edu/ml/datasets/One-hundred+plant+species+leaves+data+set). We intended to only use shape information currently.
 
 # Current Best
-The best model now is the architecture that looks like a "naive" module as google's Inception net but in 1D case. The input is just the CCD (center contour distance) feature, each conv1d block is with different kernel in order to extract possible features at different scale. These features are then concatenated to feed to following fully connected layers. Once this network is trained well, the classifying layer on top is taken off and replaced by a kernel svm trying to increase accuracy.
+The best model now is the architecture that looks like a "naive" module as google's Inception net but in 1D case. The input is just the CCD (center contour distance) feature, each conv1d block is with different kernel in order to extract possible features at different scales. These features are then concatenated to feed to following fully connected layers. Once this network is trained well, the classifying layer on top is taken off and replaced by a kernel svm trying to increase accuracy.
 
 For all the three datasets, it can all get around or greater than 90% accurracy without tuning hyperparamters particularly. It can obtain >99% accuracy in the swedish leaf dataset (holding %10 as test). A pretrained model `leafconv1d.hdf5` is included.
 
