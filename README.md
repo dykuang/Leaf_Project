@@ -1,13 +1,10 @@
 # Leaf_Project
-This repository contains codes that I tried in classifying different leaves. The data set is obtained from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/leaf). We intended to only use shape information currently.
+This repository contains some codes that I tried in classifying different leaves and possibly will be more organised once a good model is achieved. The data set for test can be obtained from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/leaf), [Swedish leaf dataset](http://www.cvl.isy.liu.se/en/research/datasets/swedish-leaf/) and [UCI's 100 leaf](https://archive.ics.uci.edu/ml/datasets/One-hundred+plant+species+leaves+data+set). We intended to only use shape information currently.
 
 # Current Best
-The current best performace (~70% accuracy for classifying test data into 30 classes) is achieved by stacking CCD and spectrum density of CCD together and feed them into a NN classifer (input - 50 - dropout(0.5) - 30 - droput(0.25) - softmax)
+The best model now is the architecture that looks like a "naive" module as google's Inception net but in 1D case. The input is just the CCD (center contour distance) feature, each conv1d block is with different kernel in order to extract possible features at different scale. These features are then concatenated to feed to following fully connected layers. Once this network is trained well, the classifying layer on top is taken off and replaced by a kernel svm trying to increase accuracy.
 
-The second best (~60% accuracy) is achieved by CCD + SVM/MLP.
-
-In both cases, proper scalling features is crucial. Here `RobustScaler()` from `scikit-learn` package is used. 
-As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA score from CCD feature. 
+For all the three datasets, it can all get around or greater than 90% accurracy without tuning hyperparamters particularly. It can obtain >99% accuracy in the swedish leaf dataset (holding %10 as test). A pretrained model `leafconv1d.hdf5` is included.
 
 # Brief description for each script
 ## Dependencies
@@ -32,3 +29,4 @@ As as a side note SVM can achieve ~60% accuracy with only the first 5-6 PCA scor
 * `Keras_cnn_leaf.py`: Directly applying cnn on the leaf classification task. Since the data set is small, Keras's image generator is used.
 * `feature_test.py`: Testing some common classifiers including: SVM, kNN, RandomForest and MLP on extraced features. Classifiers are from scikit-learn package.
 * `leaf_pnn.py`: Testing SVM and PNN on extracted features.
+* `leaf_1dconv.py`: The current best model using a google perception like module + svm.
