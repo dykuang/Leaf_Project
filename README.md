@@ -4,7 +4,8 @@ This repository contains some codes that I tried in classifying different leaves
 # Current Best
 The best model now is the architecture that looks like a "naive" module as google's Inception net but in 1D case. The input is just the CCD (center contour distance) feature, each conv1d block is with different kernel in order to extract possible features at different scales. These features are then concatenated to feed to following fully connected layers. Once this network is trained well, the classifying layer on top is taken off and replaced by a kernel svm trying to increase accuracy.
 
-For all the three datasets, it can all get around or greater than 90% accurracy without tuning hyperparamters particularly. It can obtain >99% accuracy in the swedish leaf dataset (holding %10 as test). A pretrained model `leafconv1d.hdf5` is included.
+For all the three datasets, it can all get around or greater than 90% accurracy without tuning hyperparamters particularly. It can obtain >99% accuracy in the swedish leaf dataset (holding %10 as test). A pretrained model `leafconv1d.hdf5` on the swedish leaf 
+dataset is included.
 
 # Brief description for each script
 ## Dependencies
