@@ -29,4 +29,5 @@ For all the three datasets, it can all get around or greater than 90% accurracy 
 * `Keras_cnn_leaf.py`: Directly applying cnn on the leaf classification task. Since the data set is small, Keras's image generator is used.
 * `feature_test.py`: Testing some common classifiers including: SVM, kNN, RandomForest and MLP on extraced features. Classifiers are from scikit-learn package.
 * `leaf_pnn.py`: Testing SVM and PNN on extracted features.
+* `leaf_pnn_swedish.py`: This contains some different architectures of network tried on the swedish leaf dataset.
 * `leaf_1dconv.py`: The current best model using a google perception like module + svm.
