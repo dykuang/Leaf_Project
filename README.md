@@ -1,5 +1,5 @@
 # Leaf_Project
-This repository contains some codes that I tried in classifying different leaves and possibly will be more organised once a good model is achieved. The data set for test can be obtained from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/leaf), [Swedish leaf dataset](http://www.cvl.isy.liu.se/en/research/datasets/swedish-leaf/) and [UCI's 100 leaf](https://archive.ics.uci.edu/ml/datasets/One-hundred+plant+species+leaves+data+set). We intended to only use shape information currently.
+This repository contains some codes that I tried in classifying different leaves and possibly will be more organised once a good model is achieved. The data set for test can be obtained from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/leaf), [Swedish leaf dataset](http://www.cvl.isy.liu.se/en/research/datasets/swedish-leaf/) and [UCI's 100 leaf](https://archive.ics.uci.edu/ml/datasets/One-hundred+plant+species+leaves+data+set). We intended to only use shape information currently. The classifier should also work for classifying 1 dimensional time series. Some tested time series can be downloaded [here](http://timeseriesclassification.com/dataset.php).
 
 # Current Best
 The best model now is the architecture that looks like a "naive" module as google's Inception net but in 1D case. The input is just the CCD (center contour distance) feature, each conv1d block is with different kernel in order to extract possible features at different scales. These features are then concatenated to feed to following fully connected layers. Once this network is trained well, the classifying layer on top is taken off and replaced by a kernel svm trying to increase accuracy.
@@ -32,3 +32,5 @@ dataset is included.
 * `leaf_pnn.py`: Testing SVM and PNN on extracted features.
 * `leaf_pnn_swedish.py`: This contains some different architectures of network tried on the swedish leaf dataset.
 * `leaf_1dconv.py`: The current best model using a google perception like module + svm.
+* `leaf_1dconv_cv.py`: It perfroms cross validation to evaluate the model. 10 folds for swedish leaf datset, 16 folds for the 100 leaf dataset.
+* `convtscopy.py`: It tests the average performance on some time series data.
