@@ -28,9 +28,8 @@ from keras import optimizers, losses, utils
 from sklearn.preprocessing import  RobustScaler, MinMaxScaler, StandardScaler, LabelEncoder, Normalizer, QuantileTransformer
 from sklearn.metrics import accuracy_score
 import numpy as np
-import random
 from keras.callbacks import  EarlyStopping, ModelCheckpoint
-from keras import regularizers
+from keras.regularizers import l2
 
 #------------------------------------------------------------------------------
 # Read data
@@ -43,14 +42,14 @@ epochs = 60
 cls = 15 
 size = 75 * 15
  
-leaf_data = np.zeros((size, 200))
-leaf_label = np.zeros(size)
+#leaf_data = np.zeros((size, 200))
+#leaf_label = np.zeros(size)
+#for i in range(cls):
+#    leaf_data[i*75:(i+1)*75] = np.load(target_dir + 'S_leaf_CCD{}.npy'.format(i+1))
+#    leaf_label[i*75:(i+1)*75] = i
 
-
-for i in range(cls):
-    leaf_data[i*75:(i+1)*75] = np.load(target_dir + 'S_leaf_CCD{}.npy'.format(i+1))
-    leaf_label[i*75:(i+1)*75] = i
-    
+leaf_data = np.load(target_dir + 'S_leaf_CCD.npy')
+leaf_label = np.load(target_dir + 'S_leaf_label.npy')
 
 # =============================================================================
 # data = 'leaf_data_CCD_cv.npy'
@@ -64,48 +63,51 @@ for i in range(cls):
 
 
 # =============================================================================
-# import csv
-# target = r'data/100 leaves plant species/data_Mar_64.txt'
-# 
-# leaf_Mar = []
-# with open(target) as csvfile:
-#     readCSV = csv.reader(csvfile, delimiter=',')
-#     for row in readCSV:
-#         leaf_Mar.append(row)
-#              
-# leaf_Mar = np.asarray(leaf_Mar)
-# leaf_Mar = leaf_Mar[16:,1:].astype(float)
-# 
-# target = r'data/100 leaves plant species/data_Sha_64.txt'
-# leaf_Sha = []
-# with open(target) as csvfile:
+# =============================================================================
+#import csv
+#target = r'data/100 leaves plant species/data_Mar_64.txt'
+#  
+#leaf_Mar = []
+#with open(target) as csvfile:
+#      readCSV = csv.reader(csvfile, delimiter=',')
+#      for row in readCSV:
+#          leaf_Mar.append(row)
+#               
+#leaf_Mar = np.asarray(leaf_Mar)
+#leaf_Mar = leaf_Mar[16:,1:].astype(float)
+#  
+#target = r'data/100 leaves plant species/data_Sha_64.txt'
+#leaf_Sha = []
+#with open(target) as csvfile:
 #     readCSV = csv.reader(csvfile, delimiter=',')
 #     for row in readCSV:
 #         leaf_Sha.append(row)         
-# leaf_Sha = np.asarray(leaf_Sha)
-# leaf_Sha = leaf_Sha[16:,1:].astype(float)
+#leaf_Sha = np.asarray(leaf_Sha)
+#leaf_Sha = leaf_Sha[16:,1:].astype(float)
+#  
+#  
+#target = r'data/100 leaves plant species/data_Tex_64.txt'
+#  
+#leaf_Tex = []
+#with open(target) as csvfile:
+#      readCSV = csv.reader(csvfile, delimiter=',')
+#      for row in readCSV:
+#          leaf_Tex.append(row)
+#               
+#leaf_Tex = np.asarray(leaf_Tex)
+#leaf_Tex = leaf_Tex[15:,1:].astype(float)
 # 
-# 
-# target = r'data/100 leaves plant species/data_Tex_64.txt'
-# 
-# leaf_Tex = []
-# with open(target) as csvfile:
-#     readCSV = csv.reader(csvfile, delimiter=',')
-#     for row in readCSV:
-#         leaf_Tex.append(row)
-#              
-# leaf_Tex = np.asarray(leaf_Tex)
-# leaf_Tex = leaf_Tex[15:,1:].astype(float)
-# 
-# leaf_label = np.zeros([1584])
-# 
-# for i in range(99):
+#leaf_label = np.zeros([1584])
+#  
+#for i in range(99):
 #     leaf_label[16*i:16*i+16] = i
-#     
-# cls=99
-# size = 1584
-# 
-# leaf_data = np.hstack([leaf_Sha, leaf_Sha , leaf_Sha])
+#      
+#cls=99
+#size = 1584
+  
+#leaf_data = np.hstack([leaf_Sha, leaf_Sha , leaf_Sha])
+#leaf_data = np.hstack([leaf_Sha, leaf_Mar , leaf_Tex])
+# =============================================================================
 # =============================================================================
 #leaf_data = leaf_Sha
 #------------------------------------------------------------------------------
@@ -136,8 +138,8 @@ def auto_corr(data, lag = 2):
 
 def preprocess(train, test, flag = True):
     if True:
-#        scaler = StandardScaler().fit(train)
-        scaler = MinMaxScaler(feature_range=(-1, 1)).fit(train)
+        scaler = StandardScaler().fit(train)
+#        scaler = MinMaxScaler(feature_range=(-1, 1)).fit(train)
         train = scaler.transform(train)
         test = scaler.transform(test)
     return train, test
@@ -155,24 +157,23 @@ def addpca(train, test, comp = 40):
 
 x_train, x_test, y_train, y_test, ind_train, ind_test = train_test_split(
                              leaf_data, leaf_label, np.arange(size), 
-                             test_size=0.1, 
+                             test_size=.1, 
                              random_state = 233,
                              shuffle = True, stratify = leaf_label)
 '''
 TODO: need to think about how to augment the data properly?
 '''
-aug_flag = True
+aug_flag = False
 if aug_flag:
     x_train = np.vstack((x_train, 
-                         np.flip(x_train, axis = 1),
-                         np.roll(x_train, 5, axis = 1),
-                         np.roll(x_train, -5, axis = 1)
+                         np.flip(x_train, axis = 1)
                          ))
+    y_train = np.hstack((y_train, y_train))
     
-    y_train = np.hstack((y_train, y_train, 
-                         y_train, y_train))
-    
-    
+#    x_train = np.vstack((np.roll(x_train, 5, axis = 1),
+#                         np.roll(x_train, -5, axis = 1)))
+#    y_train = np.hstack((y_train, y_train))
+#    
 #    x_test = np.vstack((x_test, 
 #                         np.flip(x_test, axis = 1),
 #                         np.roll(x_test, 5, axis = 1),
@@ -223,72 +224,63 @@ Comments:
      The training accuracy cannot get close to 1.0, which will affects the test 
      accuracy.
 '''
-
 from keras.layers.advanced_activations import PReLU
 input_dim = x_train_std.shape[1]
 feature = Input(shape = (input_dim, 1))
 
-x = GaussianNoise(0.02)(feature)
+x = GaussianNoise(0.01)(feature)
 x = Conv1D(filters= 16, kernel_size = 8, strides=4, padding='same', dilation_rate=1, 
-       activation='linear', use_bias=True, kernel_initializer='glorot_uniform',
+       activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
        bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, 
        activity_regularizer=None, kernel_constraint=None, bias_constraint=None,
        name = 'conv1D_1')(x)
-#x = BatchNormalization()(x)
+x = BatchNormalization()(x)
 #x = PReLU()(x)
-x = MaxPooling1D(pool_size=2, strides=2, name = 'MP_1')(x)
+x = MaxPooling1D(pool_size=4, strides=2, name = 'MP_1')(x)
 x = Flatten(name = 'flat_1')(x)
 
-x_x = GaussianNoise(0.02)(feature)
+x_x = GaussianNoise(0.01)(feature)
 x_x = Conv1D(filters= 24, kernel_size = 12, strides= 6, padding='same', dilation_rate=1, 
-       activation='linear', use_bias=True, kernel_initializer='glorot_uniform',
+       activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
        bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, 
        activity_regularizer=None, kernel_constraint=None, bias_constraint=None,
        name = 'conv1D_2')(x_x)
-#x_x = BatchNormalization()(x_x)
+x_x = BatchNormalization()(x_x)
 #x_x = PReLU()(x_x)
-x_x = MaxPooling1D(pool_size=2, strides=2, name = 'MP_2')(x_x)
-x_x = Flatten()(x_x)
+x_x = MaxPooling1D(pool_size=4, strides=2, name = 'MP_2')(x_x)
+x_x = Flatten(name = 'flat_2')(x_x)
 
-x_x_x = GaussianNoise(0.02)(feature)
+x_x_x = GaussianNoise(0.01)(feature)
 x_x_x = Conv1D(filters= 32, kernel_size = 16, strides= 8, padding='same', dilation_rate=1, 
-       activation='linear', use_bias=True, kernel_initializer='glorot_uniform',
+       activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
        bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, 
        activity_regularizer=None, kernel_constraint=None, bias_constraint=None,
        name = 'conv1D_3')(x_x_x)
-#x_x_x = BatchNormalization()(x_x_x)
+x_x_x = BatchNormalization()(x_x_x)
 #x_x_x = PReLU()(x_x_x)
-x_x_x = MaxPooling1D(pool_size=2, strides=2, name = 'MP_3')(x_x_x)
-x_x_x = Flatten()(x_x_x)
+x_x_x = MaxPooling1D(pool_size=4, strides=2, name = 'MP_3')(x_x_x)
+x_x_x = Flatten(name = 'flat_3')(x_x_x)
 
 
-#feature_f = Conv1D(filters= 8, kernel_size = 2, strides= 2, padding='same', dilation_rate=1, 
-#       activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
-#       bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, 
-#       activity_regularizer=None, kernel_constraint=None, bias_constraint=None,
-#       name = 'conv1D_4')(feature)
-#feature_f = MaxPooling1D(pool_size=2, strides=2, name = 'MP_4')(feature)
-feature_f = Flatten(name = 'flat_2')(feature)
+feature_f = GaussianNoise(0.01)(feature)
+#feature_f = MaxPooling1D(pool_size=4, strides=2, name = 'MP_4')(feature_f)
+feature_f = Flatten(name = 'flat_4')(feature_f)
 #
 x = concatenate([x, x_x, x_x_x, feature_f])
-
 #x = BatchNormalization()(x) 
-x = Dense(512, activation = 'linear', name = 'dense_1')(x)
-x = PReLU()(x)
-x = BatchNormalization()(x)
+#x = Dropout(0.5)(x)
 
+x = Dense(512, activation = 'linear', name = 'dense_1')(x)
+x = BatchNormalization()(x)
+x = PReLU()(x)
+#x = Dropout(0.5)(x)
 
 x = Dense(128, activation = 'linear', name = 'dense_2')(x) #increase the dimension here for better speration in stage2 ?
-x = PReLU()(x)
 x = BatchNormalization()(x)
+x = PReLU()(x)
+x = Dropout(0.5)(x)
 
 
-#x = Dense(64, activation = 'linear', name = 'dense_extra')(x)
-#x = PReLU()(x)
-#x = BatchNormalization()(x) 
-
-#
-#x = Dropout(0.15)(x)
 pred = Dense(cls, activation = 'softmax', name = 'dense_3')(x)
 
 model = Model(feature, pred)
@@ -309,7 +301,7 @@ x_test_std = x_test_std.reshape(x_test_std.shape[0], x_test_std.shape[1], 1)
 history = model.fit(x=x_train_std, y=y_train,
                     batch_size = batchsize,
                     epochs = epochs, verbose = 0,
-                    validation_split = 0.1,
+                    validation_split = .2,
 #                    validation_data = (x_test_std, y_test),
                     callbacks=[best_model])
 
@@ -397,15 +389,6 @@ def LC(history):
     plt.show()
 
 
-score = model.evaluate(x_test_std, y_test)
-print('test loss:', score[0])
-print('test accuracy:', score[1]) 
-
-from sklearn.metrics import coverage_error
-prob = model.predict(x_test_std)
-print('True labels are within %.2f of the prediction' 
-      % (coverage_error(y_test, prob)))
-
 LC(history)
 
 #------------------------------------------------------------------------------
@@ -419,6 +402,24 @@ model_best = load_model(target_dir + 'leaf_conv1d.hdf5')
 x_encoder = K.function([model_best.layers[0].input, K.learning_phase()],
                         [model_best.get_layer('dense_3').input])
 
+x_conv1 = K.function([model_best.layers[0].input, K.learning_phase()],
+                        [model_best.get_layer('flat_1').output])
+
+x_conv2 = K.function([model_best.layers[0].input, K.learning_phase()],
+                        [model_best.get_layer('flat_2').input])
+
+x_conv3 = K.function([model_best.layers[0].input, K.learning_phase()],
+                        [model_best.get_layer('flat_3').input])
+
+score = model_best.evaluate(x_test_std, y_test)
+print('test loss:', score[0])
+print('test accuracy:', score[1]) 
+
+from sklearn.metrics import coverage_error
+prob = model.predict(x_test_std)
+print('True labels are within %.2f of the prediction' 
+      % (coverage_error(y_test, prob)))
+
 yy_train = np.argmax(y_train, axis = 1)
 xx_train = x_encoder([x_train_std, 0])[0]
 xx_test = x_encoder([x_test_std, 0])[0]
@@ -429,7 +430,7 @@ xx_train_pca, xx_test_pca = addpca(xx_train_std, xx_test_std, comp = 25)
  
 # Using Knn for nonlinearity correction?
 clf_2 = svm.SVC(C=1.0, cache_size=200, class_weight='balanced', coef0=0,
-            decision_function_shape='ovr', degree=1, gamma='auto', kernel='rbf',
+            decision_function_shape='ovr', degree=1, gamma='auto', kernel='linear',
             max_iter=-1, probability=True, random_state=None, shrinking=True,
             tol=0.001, verbose=False)
 
@@ -437,7 +438,7 @@ clf_2.fit(xx_train_pca, yy_train)
 print("the accuracy with pretrain (svm): %.4f" % accuracy_score(np.argmax(y_test, axis=1),
                                                           clf_2.predict(xx_test_pca)))
 
-clf_knn = KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto',
+clf_knn = KNeighborsClassifier(n_neighbors=3, weights='uniform', algorithm='auto',
                                 leaf_size=10, p=2, metric='chebyshev', 
                                 metric_params=None, n_jobs=1)
 
@@ -458,7 +459,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def view_embeded(data, label):
      plt.figure(figsize=(10,10))
-     x_embedded_2d = TSNE(n_components=2).fit_transform(data)
+     x_embedded_2d = TSNE(n_components=2, random_state=0).fit_transform(data)
      plt.scatter(x_embedded_2d[:, 0], x_embedded_2d[:, 1], 25, c=label, cmap = 'rainbow')
      plt.colorbar()
      
