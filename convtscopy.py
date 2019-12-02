@@ -31,7 +31,7 @@ from keras.regularizers import l2
 batchsize = 32
 epochs = 60
 
-data_train = ['datasets/Worms/Worms_TEST.txt',
+data_train = ['datasets/Worms/Worms_TRAIN.txt',
               'datasets/SwedishLeaf/SwedishLeaf_TRAIN.txt',
               'datasets/Phoneme/Phoneme_TRAIN.txt',
               'datasets/CC/ChlorineConcentration_TRAIN.txt',
@@ -42,7 +42,7 @@ data_train = ['datasets/Worms/Worms_TEST.txt',
               'datasets/DistalPhalanXTW/DistalPhalanXTW_TRAIN.txt'
               ]
 
-data_test = ['datasets/Worms/Worms_TRAIN.txt',
+data_test = ['datasets/Worms/Worms_TEST.txt',
               'datasets/SwedishLeaf/SwedishLeaf_TEST.txt',
               'datasets/Phoneme/Phoneme_TEST.txt',
               'datasets/CC/ChlorineConcentration_TEST.txt',
